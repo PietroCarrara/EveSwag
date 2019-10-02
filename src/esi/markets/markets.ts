@@ -1,6 +1,7 @@
-import { Util, PaginatedCollection } from "../util";
+import { Util, PaginatedCollection } from "../../util";
 import { TypePrice } from "./typePrice";
 import { MarketOrder } from "./marketOrder";
+import { ExpectedMaxPagesError } from "../../errors";
 
 export class Markets {
     
@@ -27,8 +28,12 @@ export class Markets {
             orders.push(MarketOrder.fromESIObject(item));
         }
 
-        return new PaginatedCollection(orders, async () => {
-            return this.regionOrders(regionID, page + 1);
+        if (!res.maximumPages) {
+            throw new ExpectedMaxPagesError();
+        }
+
+        return new PaginatedCollection(orders, page, res.maximumPages, async (page) => {
+            return this.regionOrders(regionID, page);
         });
     }
 }
