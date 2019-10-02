@@ -11,7 +11,7 @@ export class Util {
      * @param data Object to send as data on the request
      * @param method Http verb used
      */
-    public static async Request (
+    public static async request (
         subUrl: string,
         data = {},
         method: "GET"|"POST"|"DELETE"|"PUT" = 'GET',
@@ -27,6 +27,24 @@ export class Util {
 
         return axios.request(req)
         .then(res => new ESIResponse(res, req));
+    }
+}
+
+export class PaginatedCollection<T> {
+    public readonly data: T[];
+    public readonly nextPage: () => Promise<PaginatedCollection<T>>;
+
+    /**
+     * @param data The data in the collection
+     * @param nextPage A function that returns the next page in the collection
+     */
+    public constructor(data: T[], nextPage: () => Promise<PaginatedCollection<T>>) {
+        this.data = data;
+        this.nextPage = nextPage;
+    }
+
+    public isEmpty(): boolean {
+        return this.data.length > 0;
     }
 }
 
