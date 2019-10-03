@@ -31,7 +31,13 @@ export class Util {
             req.data = data;
         };
 
-        return axios.request(req)
+        var promise = axios.request(req);
+
+        promise.catch(r => {
+            throw r.response.data.error;
+        });
+
+        return promise
             .then(res => new ESIResponse(res, req));
     }
 }
