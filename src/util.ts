@@ -19,11 +19,16 @@ export class Util {
         headers = {}
     ): Promise<ESIResponse> {
 
-        var req = {
+        var req: any = {
             method: method,
-            data: data,
             url: baseUrl + subUrl,
             headers: headers,
+        };
+
+        if (req.method === "GET") {
+            req.params = data;
+        } else {
+            req.data = data;
         };
 
         return axios.request(req)
